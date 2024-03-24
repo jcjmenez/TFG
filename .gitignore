@@ -1,0 +1,7 @@
+videos/*
+__pycache__
+old_test
+yolov8n.pt
+
+# Keep folder
+!videos/.gitkeep
