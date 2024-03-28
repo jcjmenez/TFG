@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+from key_handler import KeyHandler
+from video_handler import VideoHandler
 
 def region_of_interest(img, vertices):
     mask = np.zeros_like(img)
@@ -30,18 +32,23 @@ def detect_lanes(img):
 
     return combined_img
 
-cap = cv2.VideoCapture("videos/highway1.mp4")
+video_path = 'videos/highway1.mp4'
+video_handler = VideoHandler(video_path)
 
 while True:
-    ret, frame = cap.read()
+    if not video_handler.is_paused():
+        ret, frame = video_handler.read_frame()
     if not ret:
         break
-    
+
     processed_frame = detect_lanes(frame)
 
     cv2.imshow('Lane Detection', processed_frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord('q'):
         break
+    else:
+        KeyHandler.handle_key_press(key, video_handler)
 
-cap.release()
+video_handler.release()
 cv2.destroyAllWindows()
