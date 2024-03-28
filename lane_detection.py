@@ -17,7 +17,7 @@ def draw_lines(img, lines, color=[255, 0, 0], thickness=3):
 
 def detect_lanes(img):
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    blurred_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
+    blurred_img = cv2.GaussianBlur(gray_img, (7, 7), 0)
     edges = cv2.Canny(blurred_img, 50, 150)
 
     height, width = img.shape[:2]
@@ -32,7 +32,7 @@ def detect_lanes(img):
 
     return combined_img
 
-video_path = 'videos/highway1.mp4'
+video_path = 'videos/street5.mp4'
 video_handler = VideoHandler(video_path)
 
 while True:
