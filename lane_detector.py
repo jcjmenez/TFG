@@ -66,7 +66,6 @@ class LaneDetector:
         extended_right_line = (abs(bottom_x_right), abs(bottom_y), abs(int(intersections[0])), abs(int(intersections[1])))
         # Calculate the separation between the lines
         line_separation = abs(bottom_x_right - bottom_x_left)
-        print(line_separation, max_line_separation)
         # Check if the separation is small
         if line_separation <= max_line_separation:
             # Use the previous lines

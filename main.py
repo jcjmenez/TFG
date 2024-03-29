@@ -1,18 +1,17 @@
 import cv2
-import torch
 
 from model_handler import ModelHandler
 from video_handler import VideoHandler
 from object_detection import ObjectDetection
 from key_handler import KeyHandler
-
+from lane_detector import LaneDetector
 
 # Load model
 model_handler = ModelHandler('yolov8n.pt')
 
-video_path = 'videos/street5.mp4'
+video_path = 'videos/back3.mp4'
 video_handler = VideoHandler(video_path)
-
+lane_detector = LaneDetector()
 ret = True
 
 while ret:
@@ -23,7 +22,7 @@ while ret:
 
     # Resize frame to 720p for better visualization and performance
     frame = video_handler.resize_frame(frame, 1280, 720)
-    
+    frame = lane_detector.detect_lanes(frame)
     results = model_handler.detect_objects(frame)
     # MODEL DEBUG: frame_ = results[0].plot()
     frame_ = frame.copy()
