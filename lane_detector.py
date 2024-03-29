@@ -41,7 +41,9 @@ class LaneDetector:
             # Parallel lines, return None
             return None
     
-    def extend_lines(self, left_line, right_line, width, height, max_line_separation=250):
+    def extend_lines(self, left_line, right_line, width, height):
+        RES_SEPARATION_FACTOR = 0.13
+        max_line_separation = width * RES_SEPARATION_FACTOR # Maximum separation between the lines based on the resolution
         if left_line is None or right_line is None:
             return None
 
@@ -64,7 +66,7 @@ class LaneDetector:
         extended_right_line = (abs(bottom_x_right), abs(bottom_y), abs(int(intersections[0])), abs(int(intersections[1])))
         # Calculate the separation between the lines
         line_separation = abs(bottom_x_right - bottom_x_left)
-
+        print(line_separation, max_line_separation)
         # Check if the separation is small
         if line_separation <= max_line_separation:
             # Use the previous lines
@@ -85,7 +87,6 @@ class LaneDetector:
 
 
     def draw_lanes(self, img, lines, color=[255, 0, 0], thickness=3, min_slope_threshold=0.4):
-        
         max_left_line = None
         max_right_line = None
         max_left_x = float('inf')
@@ -105,20 +106,18 @@ class LaneDetector:
                                 max_right_x = x2
                                 max_right_line = (x1, y1, x2, y2)
         
-
         extended_lines = self.extend_lines(max_left_line, max_right_line, img.shape[1], img.shape[0])
         # Intersection point found, draw the extended lines
+        lines_to_draw = None
+        # If the lines are not extended, use the previous extended lines
         if extended_lines is not None:
-            for line in extended_lines:
-                x1, y1, x2, y2 = line
-                cv2.line(img, (x1, y1), (x2, y2), color, thickness)
-        # Draw the prev lines
+            lines_to_draw = extended_lines
         else:
-            for line in self.prev_extended_lines:
-                # Absolute value of the line tuple
+            lines_to_draw = self.prev_extended_lines
+        if lines_to_draw is not None:
+            for line in lines_to_draw:
                 x1, y1, x2, y2 = line
                 cv2.line(img, (x1, y1), (x2, y2), color, thickness)
-
 
     def detect_lanes(self, img):
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -139,15 +138,15 @@ class LaneDetector:
 
 
 def main():
-    video_path = 'videos/back3.mp4'
+    video_path = 'videos/street5.mp4'
     video_handler = VideoHandler(video_path)
     lane_detector = LaneDetector()
-
     while True:
         if not video_handler.is_paused():
             ret, frame = video_handler.read_frame()
         if not ret:
             break
+        frame = video_handler.resize_frame(frame, 1280, 720)
 
         processed_frame = lane_detector.detect_lanes(frame)
 
