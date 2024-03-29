@@ -6,6 +6,7 @@ from video_handler import VideoHandler
 class LaneDetector:
     def __init__(self):
         self.prev_extended_lines = None
+        self.current_lane = None
 
     def region_of_interest(self, img, vertices):
         mask = np.zeros_like(img)
@@ -117,6 +118,7 @@ class LaneDetector:
             for line in lines_to_draw:
                 x1, y1, x2, y2 = line
                 cv2.line(img, (x1, y1), (x2, y2), color, thickness)
+        self.current_lane = lines_to_draw
 
     def detect_lanes(self, img):
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -148,7 +150,6 @@ def main():
             frame = video_handler.resize_frame(frame, 1280, 720)
 
             processed_frame = lane_detector.detect_lanes(frame)
-
             cv2.imshow('Lane Detection', processed_frame)
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
