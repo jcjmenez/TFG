@@ -53,16 +53,23 @@ class LaneDetector:
         x1_left, y1_left, x2_left, y2_left = left_line
         x1_right, y1_right, x2_right, y2_right = right_line
         
-        # Draw lines from their starting points to the intersection point
-        extended_left_line = (int(x1_left), int(y1_left), int(intersections[0]), int(intersections[1]))
-        extended_right_line = (int(x1_right), int(y1_right), int(intersections[0]), int(intersections[1]))
+        # Find y-coordinate at the bottom of the screen
+        bottom_y = height - 1
+        
+        # Calculate the x-coordinate for the bottom of the screen for each line
+        bottom_x_left = int((bottom_y - y1_left) / ((y2_left - y1_left) / (x2_left - x1_left)) + x1_left)
+        bottom_x_right = int((bottom_y - y1_right) / ((y2_right - y1_right) / (x2_right - x1_right)) + x1_right)
+        
+        # Draw lines from the bottom of the screen to the intersection point
+        extended_left_line = (bottom_x_left, bottom_y, int(intersections[0]), int(intersections[1]))
+        extended_right_line = (bottom_x_right, bottom_y, int(intersections[0]), int(intersections[1]))
         
         if int(intersections[0]) < 0 or int(intersections[1]) < 0 or int(intersections[0]) > width or int(intersections[1]) > height:
             return None
         
-        print(int(intersections[0]), int(intersections[1]))
         self.prev_extended_lines = [extended_left_line, extended_right_line]
         return extended_left_line, extended_right_line
+
 
 
     def draw_lanes(self, img, lines, color=[255, 0, 0], thickness=3, min_slope_threshold=0.4):
@@ -119,7 +126,7 @@ class LaneDetector:
 
 
 def main():
-    video_path = 'videos/back3.mp4'
+    video_path = 'videos/street5.mp4'
     video_handler = VideoHandler(video_path)
     lane_detector = LaneDetector()
 
