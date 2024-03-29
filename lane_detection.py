@@ -9,15 +9,32 @@ def region_of_interest(img, vertices):
     masked_img = cv2.bitwise_and(img, mask)
     return masked_img
 
-def draw_lines(img, lines, color=[255, 0, 0], thickness=3, min_slope_threshold=0.4):
+def draw_lanes(img, lines, color=[255, 0, 0], thickness=3, min_slope_threshold=0.4):
+    max_left_line = None
+    max_right_line = None
+    max_left_x = float('inf')
+    max_right_x = float('-inf')
+
     if lines is not None:
         for line in lines:
             for x1, y1, x2, y2 in line:
                 if x2 != x1:
                     slope = (y2 - y1) / (x2 - x1)
                     if abs(slope) > min_slope_threshold:
-                        cv2.line(img, (x1, y1), (x2, y2), color, thickness)
-
+                        if x1 <= max_left_x:
+                            max_left_x = x1
+                            max_left_line = (x1, y1, x2, y2)
+                        if x2 >= max_right_x:
+                            max_right_x = x2
+                            max_right_line = (x1, y1, x2, y2)
+    
+    if max_left_line is not None:
+        x1, y1, x2, y2 = max_left_line
+        cv2.line(img, (x1, y1), (x2, y2), color, thickness)
+    
+    if max_right_line is not None:
+        x1, y1, x2, y2 = max_right_line
+        cv2.line(img, (x1, y1), (x2, y2), color, thickness)
 
 
 def detect_lanes(img):
@@ -31,13 +48,14 @@ def detect_lanes(img):
 
     lines = cv2.HoughLinesP(masked_edges, 1, np.pi/180, 120, minLineLength=50, maxLineGap=100)
     line_img = np.zeros((height, width, 3), dtype=np.uint8)
-    draw_lines(line_img, lines)
+    draw_lanes(line_img, lines)
 
     combined_img = cv2.addWeighted(img, 0.8, line_img, 1.0, 0.0)
 
     return combined_img
 
-video_path = 'videos/street5.mp4'
+
+video_path = 'videos/highway1.mp4'
 video_handler = VideoHandler(video_path)
 
 while True:
