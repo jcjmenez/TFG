@@ -143,13 +143,13 @@ def main():
     while True:
         if not video_handler.is_paused():
             ret, frame = video_handler.read_frame()
-        if not ret:
-            break
-        frame = video_handler.resize_frame(frame, 1280, 720)
+            if not ret:
+                break
+            frame = video_handler.resize_frame(frame, 1280, 720)
 
-        processed_frame = lane_detector.detect_lanes(frame)
+            processed_frame = lane_detector.detect_lanes(frame)
 
-        cv2.imshow('Lane Detection', processed_frame)
+            cv2.imshow('Lane Detection', processed_frame)
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             break
