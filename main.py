@@ -23,7 +23,8 @@ while ret:
         break
 
     results = model_handler.detect_objects(frame)
-    frame_ = results[0].plot()
+    # MODEL DEBUG: frame_ = results[0].plot()
+    frame_ = frame.copy()
 
     # Loop through detected objects
     for obj in results[0].boxes:
