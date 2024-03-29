@@ -9,22 +9,27 @@ def region_of_interest(img, vertices):
     masked_img = cv2.bitwise_and(img, mask)
     return masked_img
 
-def draw_lines(img, lines, color=[255, 0, 0], thickness=3):
+def draw_lines(img, lines, color=[255, 0, 0], thickness=3, min_slope_threshold=0.4):
     if lines is not None:
         for line in lines:
             for x1, y1, x2, y2 in line:
-                cv2.line(img, (x1, y1), (x2, y2), color, thickness)
+                if x2 != x1:
+                    slope = (y2 - y1) / (x2 - x1)
+                    if abs(slope) > min_slope_threshold:
+                        cv2.line(img, (x1, y1), (x2, y2), color, thickness)
+
+
 
 def detect_lanes(img):
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    blurred_img = cv2.GaussianBlur(gray_img, (7, 7), 0)
+    blurred_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
     edges = cv2.Canny(blurred_img, 50, 150)
 
     height, width = img.shape[:2]
     vertices = np.array([[(0, height), (width / 2, height / 2), (width, height)]], dtype=np.int32)
     masked_edges = region_of_interest(edges, vertices)
 
-    lines = cv2.HoughLinesP(masked_edges, 1, np.pi/180, 50, minLineLength=50, maxLineGap=100)
+    lines = cv2.HoughLinesP(masked_edges, 1, np.pi/180, 120, minLineLength=50, maxLineGap=100)
     line_img = np.zeros((height, width, 3), dtype=np.uint8)
     draw_lines(line_img, lines)
 
