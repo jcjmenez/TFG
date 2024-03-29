@@ -41,35 +41,47 @@ class LaneDetector:
             # Parallel lines, return None
             return None
     
-    def extend_lines(self, left_line, right_line, width, height):
+    def extend_lines(self, left_line, right_line, width, height, max_line_separation=250):
         if left_line is None or right_line is None:
             return None
-        
+
         intersections = self.find_intersection(left_line, right_line)
         if intersections is None:
             # If no intersection point found, draw the previous lines
             return None
-        
-        x1_left, y1_left, x2_left, y2_left = left_line
-        x1_right, y1_right, x2_right, y2_right = right_line
-        
+
         # Find y-coordinate at the bottom of the screen
         bottom_y = height - 1
-        
+
+        x1_left, y1_left, x2_left, y2_left = left_line
+        x1_right, y1_right, x2_right, y2_right = right_line
         # Calculate the x-coordinate for the bottom of the screen for each line
         bottom_x_left = int((bottom_y - y1_left) / ((y2_left - y1_left) / (x2_left - x1_left)) + x1_left)
         bottom_x_right = int((bottom_y - y1_right) / ((y2_right - y1_right) / (x2_right - x1_right)) + x1_right)
-        
-        # Draw lines from the bottom of the screen to the intersection point
-        extended_left_line = (bottom_x_left, bottom_y, int(intersections[0]), int(intersections[1]))
-        extended_right_line = (bottom_x_right, bottom_y, int(intersections[0]), int(intersections[1]))
+
+        # If there are no previous lines, draw the current lines
+        extended_left_line = (abs(bottom_x_left), abs(bottom_y), abs(int(intersections[0])), abs(int(intersections[1])))
+        extended_right_line = (abs(bottom_x_right), abs(bottom_y), abs(int(intersections[0])), abs(int(intersections[1])))
+        # Calculate the separation between the lines
+        line_separation = abs(bottom_x_right - bottom_x_left)
+
+        # Check if the separation is small
+        if line_separation <= max_line_separation:
+            # Use the previous lines
+            if self.prev_extended_lines is not None:
+                return None
+            else:
+                
+                self.prev_extended_lines = [extended_left_line, extended_right_line]
+                return extended_left_line, extended_right_line
+    
         
         if int(intersections[0]) < 0 or int(intersections[1]) < 0 or int(intersections[0]) > width or int(intersections[1]) > height:
             return None
         
         self.prev_extended_lines = [extended_left_line, extended_right_line]
-        return extended_left_line, extended_right_line
 
+        return extended_left_line, extended_right_line
 
 
     def draw_lanes(self, img, lines, color=[255, 0, 0], thickness=3, min_slope_threshold=0.4):
@@ -103,6 +115,7 @@ class LaneDetector:
         # Draw the prev lines
         else:
             for line in self.prev_extended_lines:
+                # Absolute value of the line tuple
                 x1, y1, x2, y2 = line
                 cv2.line(img, (x1, y1), (x2, y2), color, thickness)
 
@@ -126,7 +139,7 @@ class LaneDetector:
 
 
 def main():
-    video_path = 'videos/street5.mp4'
+    video_path = 'videos/back3.mp4'
     video_handler = VideoHandler(video_path)
     lane_detector = LaneDetector()
 
