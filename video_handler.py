@@ -17,3 +17,6 @@ class VideoHandler:
 
     def set_paused(self, paused):
         self.paused = paused
+
+    def resize_frame(self, frame, width, height):
+        return cv2.resize(frame, (width, height))

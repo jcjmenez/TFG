@@ -7,11 +7,10 @@ from object_detection import ObjectDetection
 from key_handler import KeyHandler
 
 
-
 # Load model
 model_handler = ModelHandler('yolov8n.pt')
 
-video_path = 'videos/video2.mp4'
+video_path = 'videos/street5.mp4'
 video_handler = VideoHandler(video_path)
 
 ret = True
@@ -22,6 +21,9 @@ while ret:
     if not ret:
         break
 
+    # Resize frame to 720p for better visualization and performance
+    frame = video_handler.resize_frame(frame, 1280, 720)
+    
     results = model_handler.detect_objects(frame)
     # MODEL DEBUG: frame_ = results[0].plot()
     frame_ = frame.copy()
