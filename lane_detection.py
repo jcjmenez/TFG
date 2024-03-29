@@ -9,12 +9,51 @@ def region_of_interest(img, vertices):
     masked_img = cv2.bitwise_and(img, mask)
     return masked_img
 
+
+def extend_lines(left_line, right_line):
+    if left_line is None or right_line is None:
+        return None
+    
+    x1_left, y1_left, x2_left, y2_left = left_line
+    x1_right, y1_right, x2_right, y2_right = right_line
+    
+    # Calculate the slopes and intercepts of the lines
+    slope_left = (y2_left - y1_left) / (x2_left - x1_left) if (x2_left - x1_left) != 0 else float('inf')
+    slope_right = (y2_right - y1_right) / (x2_right - x1_right) if (x2_right - x1_right) != 0 else float('inf')
+    
+    if slope_left == 0 and slope_right == 0:
+        return None
+    
+    intercept_left = y1_left - slope_left * x1_left
+    intercept_right = y1_right - slope_right * x1_right
+    
+    # Find the intersection point of the lines
+    if slope_left != float('inf') and slope_right != float('inf') and slope_left != slope_right:
+        # Points intersection
+        # y = m1 * x + b1
+        # y = m2 * x + b2
+        # m1 * x + b1 = m2 * x + b2
+        # x = (b2 - b1) / (m1 - m2)
+        intersection_x = (intercept_right - intercept_left) / (slope_left - slope_right)
+        intersection_y = slope_left * intersection_x + intercept_left
+    else:
+        # Parallel lines, return None
+        return None
+    
+    # Draw lines from their starting points to the intersection point
+    extended_left_line = (int(x1_left), int(y1_left), int(intersection_x), int(intersection_y))
+    extended_right_line = (int(x1_right), int(y1_right), int(intersection_x), int(intersection_y))
+    
+    return extended_left_line, extended_right_line
+
+
 def draw_lanes(img, lines, color=[255, 0, 0], thickness=3, min_slope_threshold=0.4):
     max_left_line = None
     max_right_line = None
     max_left_x = float('inf')
     max_right_x = float('-inf')
 
+    # Find the lines with the maximum left and right x coordinates
     if lines is not None:
         for line in lines:
             for x1, y1, x2, y2 in line:
@@ -29,11 +68,20 @@ def draw_lanes(img, lines, color=[255, 0, 0], thickness=3, min_slope_threshold=0
                             max_right_line = (x1, y1, x2, y2)
     
     if max_left_line is not None:
-        x1, y1, x2, y2 = max_left_line
-        cv2.line(img, (x1, y1), (x2, y2), color, thickness)
-    
+            x1, y1, x2, y2 = max_left_line
+
     if max_right_line is not None:
-        x1, y1, x2, y2 = max_right_line
+            x1, y1, x2, y2 = max_right_line
+
+    extended_lines = extend_lines(max_left_line, max_right_line)
+    # Intersection point found, draw the extended lines
+    if extended_lines is not None:
+        for line in extended_lines:
+            x1, y1, x2, y2 = line
+            cv2.line(img, (x1, y1), (x2, y2), color, thickness)
+    # Intersection point not found, draw the original lines
+    else:
+        cv2.line(img, (x1, y1), (x2, y2), color, thickness)
         cv2.line(img, (x1, y1), (x2, y2), color, thickness)
 
 
@@ -55,7 +103,7 @@ def detect_lanes(img):
     return combined_img
 
 
-video_path = 'videos/highway1.mp4'
+video_path = 'videos/back3.mp4'
 video_handler = VideoHandler(video_path)
 
 while True:
