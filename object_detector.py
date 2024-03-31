@@ -1,6 +1,6 @@
 import cv2
 
-class ObjectDetection:
+class ObjectDetector:
     def estimate_distance(y1, y2, car_camera_height, focal_length, car_height=1):
         person_height_pixels = y2 - y1
         distance_to_person = (car_height * focal_length) / (person_height_pixels * car_camera_height)
