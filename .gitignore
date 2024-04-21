@@ -1,7 +1,9 @@
-videos/*
+datasets/videos/*
+datasets/models/*
 __pycache__
 old_test
 yolov8n.pt
 
 # Keep folder
-!videos/.gitkeep
+!datasets/videos/.gitkeep
+!datasets/models/.gitkeep

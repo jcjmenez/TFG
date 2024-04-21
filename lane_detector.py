@@ -139,7 +139,7 @@ class LaneDetector:
 
 
 def main():
-    video_path = 'videos/street5.mp4'
+    video_path = 'datasets/videos/street5.mp4'
     video_handler = VideoHandler(video_path)
     lane_detector = LaneDetector()
     while True:
