@@ -7,9 +7,9 @@ from key_handler import KeyHandler
 from lane_detector import LaneDetector
 
 # Load model
-model_handler = ModelHandler('yolov8n.pt')
+model_handler = ModelHandler('models/yolov8n.pt')
 
-video_path = 'dataset/videos/back3.mp4'
+video_path = 'datasets/videos/back3.mp4'
 video_handler = VideoHandler(video_path)
 lane_detector = LaneDetector()
 ret = True
