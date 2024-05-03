@@ -122,8 +122,21 @@ class LaneDetector:
 
     def detect_lanes(self, img):
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        blurred_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
-        edges = cv2.Canny(blurred_img, 50, 150)
+        blurred_img = cv2.GaussianBlur(gray_img, (3, 3), 0)
+        
+        # Get the luminosity of the image
+        luminosity = np.mean(blurred_img)
+        threshold = 150
+        print(luminosity)
+        # Adjust Canny thresholds based on luminosity
+        if luminosity > threshold:
+            low_threshold = 15
+            high_threshold = 30
+        else:
+            low_threshold = 50
+            high_threshold = 150
+
+        edges = cv2.Canny(blurred_img, low_threshold, high_threshold)
 
         height, width = img.shape[:2]
         vertices = np.array([[(0, height), (width / 2, height / 2), (width, height)]], dtype=np.int32)
@@ -139,7 +152,7 @@ class LaneDetector:
 
 
 def main():
-    video_path = 'datasets/videos/street5.mp4'
+    video_path = 'datasets/videos/back3.mp4'
     video_handler = VideoHandler(video_path)
     lane_detector = LaneDetector()
     while True:
