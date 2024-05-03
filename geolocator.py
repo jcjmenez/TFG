@@ -1,9 +1,13 @@
 import requests
 import random
+import os
+from dotenv import load_dotenv
 
 class GeoLocator:
-    def __init__(self, api_key):
-        self.api_key = api_key
+    def __init__(self):
+        # Load environment variables from .env file
+        load_dotenv()
+        self.api_key = os.getenv("GOOGLE_API_KEY")
 
     def get_location(self):
         # Google Maps Geolocation API endpoint
@@ -50,8 +54,7 @@ class GeoLocator:
         return random_lat, random_lng
     
 if __name__ == "__main__":
-    api_key = "API_KEY"
-    locator = GeoLocator(api_key)
+    locator = GeoLocator()
     location = locator.get_location()
     if location:
         print("User's location (latitude, longitude):", location)

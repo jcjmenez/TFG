@@ -7,3 +7,4 @@ yolov8n.pt
 # Keep folder
 !datasets/videos/.gitkeep
 !datasets/models/.gitkeep
+.env
