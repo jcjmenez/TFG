@@ -1,10 +1,11 @@
 import cv2
-
+from threading import Thread
 from model_handler import ModelHandler
 from video_handler import VideoHandler
 from object_detector import ObjectDetector
 from key_handler import KeyHandler
 from lane_detector import LaneDetector
+from voice_assistant import VoiceAssistant
 
 # Load model
 model_handler = ModelHandler('models/yolov8n.pt')
@@ -13,6 +14,19 @@ video_path = 'datasets/videos/street5.mp4'
 video_handler = VideoHandler(video_path)
 lane_detector = LaneDetector()
 ret = True
+
+assistant = VoiceAssistant(language="es-ES")
+
+# Function to run in a separate thread the voice assistant
+def run_voice_assistant():
+    while True:
+        if assistant.listen_for_keyword():
+            assistant.process_command()
+
+# Voice assistant thread
+voice_assistant_thread = Thread(target=run_voice_assistant)
+voice_assistant_thread.daemon = True
+voice_assistant_thread.start()
 
 while ret:
     if not video_handler.is_paused():
@@ -50,5 +64,6 @@ while ret:
     else:
         KeyHandler.handle_key_press(key, video_handler)
 
+voice_assistant_thread.join()
 video_handler.release()
 cv2.destroyAllWindows()
