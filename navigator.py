@@ -3,7 +3,7 @@ import random
 import os
 from dotenv import load_dotenv
 
-class GeoLocator:
+class Navigator:
     def __init__(self):
         # Load environment variables from .env file
         load_dotenv()
@@ -53,10 +53,37 @@ class GeoLocator:
         
         return random_lat, random_lng
     
+    def find_nearby_fuel_stations(self, latitude, longitude, radius=5000, fuel_type='gas_station'):
+        url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
+        params = {
+            'location': f'{latitude},{longitude}',
+            'radius': radius,
+            'type': fuel_type,
+            'key': self.api_key
+        }
+        response = requests.get(url, params=params)
+        data = response.json()
+        stations = []
+        if 'results' in data:
+            for station in data['results']:
+                if 'opening_hours' in station.keys() and station['opening_hours']['open_now']:
+                    name = station['name']
+                    location = station['geometry']['location']
+                    lat = location['lat']
+                    lng = location['lng']
+                    rating = station['rating']
+                    stations.append({'name': name, 'lat': lat, 'lon': lng, 'rating': rating})
+        else:
+            print("Error: No results found.")
+        
+        return stations
+
 if __name__ == "__main__":
-    locator = GeoLocator()
-    location = locator.get_location()
+    navigator = Navigator()
+    location = navigator.get_location()
     if location:
         print("User's location (latitude, longitude):", location)
+        print(navigator.find_nearby_fuel_stations(location[0], location[1]))
+
     else:
         print("Failed to retrieve user's location.")
