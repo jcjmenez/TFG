@@ -13,13 +13,13 @@ model_handler = ModelHandler('models/yolov8n.pt')
 video_path = 'datasets/videos/street5.mp4'
 video_handler = VideoHandler(video_path)
 lane_detector = LaneDetector()
-ret = True
+play = True
 
 assistant = VoiceAssistant(language="es-ES")
 
 # Function to run in a separate thread the voice assistant
 def run_voice_assistant():
-    while True:
+    while play:
         if assistant.listen_for_keyword():
             assistant.process_command()
 
@@ -28,10 +28,11 @@ voice_assistant_thread = Thread(target=run_voice_assistant)
 voice_assistant_thread.daemon = True
 voice_assistant_thread.start()
 
-while ret:
+while play:
     if not video_handler.is_paused():
         ret, frame = video_handler.read_frame()
         if not ret:
+            play = False
             break
 
         # Resize frame for better visualization and performance
@@ -60,10 +61,10 @@ while ret:
     cv2.imshow('frame', frame_)
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
+        play = False
         break
     else:
         KeyHandler.handle_key_press(key, video_handler)
 
-voice_assistant_thread.join()
 video_handler.release()
 cv2.destroyAllWindows()
