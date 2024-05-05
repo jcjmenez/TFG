@@ -18,6 +18,8 @@ class KeyHandler:
             video_handler.cap.set(cv2.CAP_PROP_POS_FRAMES, max(current_frame_pos - small_frame_jump, 0))
         elif key == ord(' '):
             video_handler.set_paused(not video_handler.is_paused())
-    
+        elif key == ord('q'):
+            return False
+        return True
     def draw_key_controls(frame):
         cv2.putText(frame, "Controls: p-Advance 20s, o-Rewind 20s, l-Advance 5s, k-Rewind 5s, Space-Pause/Resume, q-Quit", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)

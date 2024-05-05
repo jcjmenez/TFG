@@ -76,11 +76,7 @@ while play:
         
     cv2.imshow('frame', frame_)
     key = cv2.waitKey(1) & 0xFF
-    if key == ord('q'):
-        play = False
-        break
-    else:
-        KeyHandler.handle_key_press(key, video_handler)
+    play = KeyHandler.handle_key_press(key, video_handler)
 
 video_handler.release()
 cv2.destroyAllWindows()
