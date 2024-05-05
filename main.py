@@ -56,6 +56,9 @@ while play:
                                                                     car_camera_height, focal_length)
 
                 ObjectDetector.draw_distance_text(frame_, distance_to_person, int(obj.xyxy[0][0]), int(obj.xyxy[0][1]))
+                if lane_detector.is_object_inside_lane((obj.xyxy[0][0], obj.xyxy[0][1], obj.xyxy[0][2], obj.xyxy[0][3])):
+                    # If the person is inside the lane boundaries, warn the driver
+                    ObjectDetector.draw_bbox(frame_, obj, (0, 0, 255))
 
     KeyHandler.draw_key_controls(frame_)
     cv2.imshow('frame', frame_)

@@ -11,4 +11,4 @@ class ModelHandler:
         print(f'Using device: {self.device}')
 
     def detect_objects(self, frame):
-        return self.model.track(frame, persist=True)
+        return self.model.track(frame, persist=True, verbose=False)

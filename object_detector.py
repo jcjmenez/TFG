@@ -14,6 +14,6 @@ class ObjectDetector:
             cv2.putText(frame, f'Distance: {distance:.2f} meters', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         (0, 255, 0), 2)
 
-    def draw_bbox(frame, obj):
+    def draw_bbox(frame, obj, color=(0, 255, 0)):
         x1, y1, x2, y2 = map(int, obj.xyxy[0])
-        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
