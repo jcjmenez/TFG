@@ -17,11 +17,16 @@ play = True
 
 assistant = VoiceAssistant(language="es-ES")
 
+listening_image = None
+
 # Function to run in a separate thread the voice assistant
 def run_voice_assistant():
+    global listening_image
     while play:
         if assistant.listen_for_keyword():
+            listening_image = cv2.imread('assets/mic.jpg')
             assistant.process_command()
+            listening_image = None
 
 # Voice assistant thread
 voice_assistant_thread = Thread(target=run_voice_assistant)
@@ -61,6 +66,14 @@ while play:
                     ObjectDetector.draw_bbox(frame_, obj, (0, 0, 255))
 
     KeyHandler.draw_key_controls(frame_)
+    
+    if listening_image is not None:
+        # Resize listening image
+        listening_image_resized = cv2.resize(listening_image, (55, 100))
+        h, w, _ = listening_image_resized.shape
+        # Show mic in the bottom center of the frame
+        frame_[frame_.shape[0] - h - 10:frame_.shape[0] - 10, int((frame_.shape[1] - w) / 2):int((frame_.shape[1] + w) / 2)] = listening_image_resized
+        
     cv2.imshow('frame', frame_)
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
