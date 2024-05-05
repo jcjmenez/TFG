@@ -7,7 +7,8 @@ class Navigator:
     def __init__(self):
         # Load environment variables from .env file
         load_dotenv()
-        self.api_key = os.getenv("GOOGLE_API_KEY")
+        self.google_api_key = os.getenv("GOOGLE_API_KEY")
+        self.weather_api_key = os.getenv("OPENWEATHERMAP_API_KEY")
 
     def get_location(self):
         # Google Maps Geolocation API endpoint
@@ -25,19 +26,18 @@ class Navigator:
         }
         
         # Send POST request to Google Maps Geolocation API
-        response = requests.post(f"{url}?key={self.api_key}", json=data, headers=headers)
-        
+        response = requests.post(f"{url}?key={self.google_api_key}", json=data, headers=headers)
         # Check if request was successful
         if response.status_code == 200:
             # Parse JSON response
             location_data = response.json()
-            
             # Extract latitude and longitude
             latitude = location_data["location"]["lat"]
             longitude = location_data["location"]["lng"]
             
             return latitude, longitude
         else:
+            print(response.text)
             print("Error:", response.status_code)
             
             return self.generate_random_location()
@@ -59,7 +59,7 @@ class Navigator:
             'location': f'{latitude},{longitude}',
             'radius': radius,
             'type': fuel_type,
-            'key': self.api_key
+            'key': self.google_api_key
         }
         response = requests.get(url, params=params)
         data = response.json()
@@ -78,12 +78,31 @@ class Navigator:
         
         return stations
 
+    def get_weather(self, lat, lon):
+        url = "https://api.openweathermap.org/data/2.5/weather"
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "appid": self.weather_api_key,
+            "units": "metric"
+        }
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            weather_data = response.json()
+            return weather_data
+        else:
+            print("Failed to retrieve weather data:", response.status_code)
+            return None
+
 if __name__ == "__main__":
     navigator = Navigator()
     location = navigator.get_location()
     if location:
         print("User's location (latitude, longitude):", location)
         print(navigator.find_nearby_fuel_stations(location[0], location[1]))
+        weather = navigator.get_weather(location[0], location[1])
+        print("Weather:", weather)
+
 
     else:
         print("Failed to retrieve user's location.")
