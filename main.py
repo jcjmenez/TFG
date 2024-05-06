@@ -19,14 +19,15 @@ play = True
 assistant = VoiceAssistant(language="es-ES")
 
 listening_image = None
-
+assistant_action = None
 # Function to run in a separate thread the voice assistant
 def run_voice_assistant():
     global listening_image
+    global assistant_action
     while play:
         if assistant.listen_for_keyword():
             listening_image = cv2.imread('assets/mic.jpg')
-            assistant.process_command()
+            assistant_action = assistant.process_command()
             listening_image = None
 
 # Voice assistant thread
@@ -92,7 +93,7 @@ while play:
         frame_count += 1
         
         # Start saving frames from the last 5 seconds when 'h' key is pressed
-        if key == ord('h'):
+        if assistant_action == "Clip":
             if frame_count >= fps * 5:
                 if out is not None:
                     out.release()
@@ -109,6 +110,7 @@ while play:
                         out.write(frame)
                 # Reset frame count
                 frame_count = 0
+            assistant_action = None
 
 # Release resources
 video_handler.release()

@@ -106,7 +106,6 @@ class Navigator:
         }
         response = requests.get(url, params=params)
         data = response.json()
-        print(data)
         if 'rows' in data and len(data['rows']) > 0 and 'elements' in data['rows'][0] and len(data['rows'][0]['elements']) > 0:
             distance_text = data['rows'][0]['elements'][0].get('distance', {}).get('text', '')
             if distance_text:
@@ -141,9 +140,14 @@ class Navigator:
                     distance = self.calculate_road_distance_from_latlon(user_latitude, user_longitude, station_latitude, station_longitude)
                     if distance < min_distance:
                         min_distance = distance
-                return min_distance
+
+                time_in_traffic = self.get_time_in_traffic_from_latlon(user_latitude, user_longitude, station_latitude, station_longitude)
+                if time_in_traffic is not None:
+                    return min_distance, time_in_traffic
+                else:
+                    return min_distance, None
             else:
-                return None
+                return None, None
     
     def get_time_in_traffic_from_latlon(self, origin_latitude, origin_longitude, destination_latitude, destination_longitude):
             url = 'https://maps.googleapis.com/maps/api/distancematrix/json'
@@ -163,7 +167,7 @@ class Navigator:
                     duration_in_traffic = int(duration_in_traffic_text.split()[0])
                     if 'min' in duration_in_traffic_text.lower() and duration_in_traffic > 30:
                         return duration_in_traffic
-            return 0
+            return None
     
     def get_time_in_traffic_from_address(self, origin_lat, origin_lon, destination_address):
         url = 'https://maps.googleapis.com/maps/api/distancematrix/json'
@@ -184,7 +188,38 @@ class Navigator:
                 return duration_in_traffic
         return 0
 
-    
+    def nearest_gas_station(self):
+        location = self.get_location()
+        if location:
+            distance, nearest_station = self.calculate_nearest_gas_station_distance(location[0], location[1])
+            if distance and nearest_station:
+                return "La gasolinera abierta más cercana está a {:.2f} km. Tiempo estimado en tráfico: {} minutes.".format(distance, nearest_station)
+            elif distance and nearest_station is None:
+                return "La gasolinera abierta más cercana está a {:.2f} km.".format(distance)
+            else:
+                return "No se encontraron gasolineras abiertas cercanas"
+        else:
+            return "No se pudo obtener la ubicación del usuario"
+
+    def get_distance_to(self, destination_address):
+        location = self.get_location()
+        print(destination_address)
+        if location:
+            road_distance = self.calculate_road_distance_from_address(location[0], location[1], destination_address)
+
+            if road_distance is not None:
+                print(f"Distance to artesanos {road_distance} km.")
+                time_in_traffic = self.get_time_in_traffic_from_address(location[0], location[1], "Avenida de los artesanos 6, Tres Cantos, Madrid, Spain")
+                print(f"Time in traffic to artesanos: {time_in_traffic} minutes.")
+                if time_in_traffic is not None:
+                    return "La distancia a {} es de {:.2f} km. Tiempo estimado en tráfico: {} minutos.".format(destination_address, road_distance, time_in_traffic)
+                else:
+                    return "La distancia a {} es de {:.2f} km.".format(destination_address, road_distance)
+            else:
+                return "No se pudo calcular la distancia a {}".format(destination_address)
+
+        else:
+            return "No se pudo obtener la ubicación del usuario"
 if __name__ == "__main__":
     navigator = Navigator()
     location = navigator.get_location()
