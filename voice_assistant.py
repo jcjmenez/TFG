@@ -8,7 +8,7 @@ import pygame
 from io import BytesIO
 
 class VoiceAssistant:
-    def __init__(self, wake_word="ok drivia", language="es-ES"):
+    def __init__(self, wake_word="okay drivia", language="es-ES"):
         self.wake_word = wake_word
         self.language = language
         self.recognizer = sr.Recognizer()
@@ -16,7 +16,7 @@ class VoiceAssistant:
     def is_similar_to_wake_word(self, phrase):
         similarity = fuzz.partial_ratio(phrase.lower(), self.wake_word)
         # Minimum similarity of 50% (doesn't recognize drivia as a word)
-        return similarity >= 50
+        return similarity >= 70
 
     def listen_for_keyword(self):
         with sr.Microphone() as source:
