@@ -1,0 +1,48 @@
+Category,Query
+distance,¿Cuánto tiempo tomará llegar al trabajo mañana por la mañana?
+distance,¿Cuál es el tiempo de viaje promedio a esta hora del día?
+distance,¿Hay algún accidente reportado en la autopista principal?
+distance,¿Cuánto tiempo tomará llegar al centro de la ciudad en hora punta?
+distance,¿Cuál es el mejor momento para salir y evitar el tráfico?
+distance,¿Cómo está el tráfico en la carretera de montaña hacia el pueblo cercano?
+gas_station,¿Dónde puedo encontrar una gasolinera de servicio completo?
+gas_station,¿Hay alguna gasolinera que acepte pagos con tarjeta cerca de aquí?
+gas_station,¿Cuál es la gasolinera más económica en un radio de 5 kilómetros?
+gas_station,¿Puedes indicarme la ruta hacia la estación de servicio más segura?
+gas_station,¿Hay alguna gasolinera con servicios adicionales como lavado de autos cerca?
+gas_station,¿Cuál es la gasolinera más cercana con diesel?
+distance,¿Cuánto falta para llegar al aeropuerto desde mi ubicación actual?
+distance,¿Podrías decirme la distancia exacta al centro de convenciones más cercano?
+distance,¿Cuántos kilómetros hay hasta la estación de esquí más popular de la región?
+distance,¿Cuál es la distancia al próximo pueblo en el mapa?
+distance,¿Cuánto tiempo tomará llegar al parque temático más cercano?
+clip,¿Puedes grabar la vista del paisaje mientras conducimos?
+clip,¿Podrías hacer un clip de nuestra conversación para recordar las instrucciones?
+clip,¿Haz un clip de la carretera mientras recorremos las montañas?
+clip,¿Puedes grabar un clip de la ciudad mientras pasamos por el centro?
+clip,¿Podrías hacer un clip de la salida de sol desde el coche?
+clip,¿Haz un clip corto de la vista panorámica desde este mirador?
+distance,Necesito saber cuánto tiempo tomará llegar al trabajo mañana por la mañana.
+distance,Me gustaría conocer el tiempo de viaje promedio a esta hora del día.
+distance,Creo que hay un accidente reportado en la autopista principal.
+distance,Quiero saber cuánto tiempo tomará llegar al centro de la ciudad en hora punta.
+distance,Estoy buscando el mejor momento para salir y evitar el tráfico.
+distance,Quiero saber cómo está el tráfico en la carretera de montaña hacia el pueblo cercano.
+gas_station,Necesito echar más gasolina. ¿Dónde puedo encontrar una gasolinera de servicio completo?
+gas_station,Necesito echar gasolina
+gas_station,Voy a pagar con tarjeta, ¿hay alguna gasolinera que acepte pagos con tarjeta cerca de aquí?
+gas_station,Quiero encontrar la gasolinera más económica en un radio de 5 kilómetros.
+gas_station,Necesito indicaciones hacia la estación de servicio más segura.
+gas_station,Me gustaría encontrar una gasolinera con servicios adicionales como lavado de autos.
+gas_station,Necesito encontrar la gasolinera más cercana que tenga diesel.
+distance,Necesito saber cuánto falta para llegar al aeropuerto desde mi ubicación actual.
+distance,Quiero conocer la distancia exacta al centro de convenciones más cercano.
+distance,Me gustaría saber cuántos kilómetros hay hasta la estación de esquí más popular de la región.
+distance,Quiero saber la distancia al próximo pueblo en el mapa.
+distance,Necesito saber cuánto tiempo tomará llegar al parque temático más cercano.
+clip,Puedes grabar la vista del paisaje mientras conducimos.
+clip,Me gustaría hacer un clip de nuestra conversación para recordar las instrucciones.
+clip,Voy a hacer un clip de la carretera mientras recorremos las montañas.
+clip,Puedes grabar un clip de la ciudad mientras pasamos por el centro.
+clip,Me gustaría hacer un clip de la salida de sol desde el coche.
+clip,Voy a hacer un clip corto de la vista panorámica desde este mirador.
