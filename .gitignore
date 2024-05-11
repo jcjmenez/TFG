@@ -4,7 +4,6 @@ clips/*
 __pycache__
 old_test
 yolov8n.pt
-assitant_model.pkl
 # Keep folder
 !datasets/videos/.gitkeep
 !datasets/models/.gitkeep
