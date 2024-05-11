@@ -1,3 +1,4 @@
+import pickle
 import csv
 import nltk
 from nltk.tokenize import word_tokenize
@@ -33,6 +34,10 @@ def predict_intent(text, classifier, vectorizer):
     predicted_intent = classifier.predict(text_vectorized)
     return predicted_intent[0]
 
+def save_model(classifier, vectorizer, model_file):
+    with open(model_file, 'wb') as mf:
+        pickle.dump((classifier, vectorizer), mf)
+
 # Load queries from CSV
 queries = load_queries_from_csv('datasets/assistant/assistant_queries.csv')
 
@@ -44,3 +49,6 @@ user_input = "Necesito echar gasolina"
               
 predicted_intent = predict_intent(user_input, classifier, vectorizer)
 print("Intención predicha:", predicted_intent)
+
+# Save the trained model
+save_model(classifier, vectorizer, 'models/assistant_model.pkl')
