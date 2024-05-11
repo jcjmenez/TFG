@@ -6,6 +6,7 @@ from gtts import gTTS
 import os
 import pygame
 from io import BytesIO
+import pickle
 
 class VoiceAssistant:
     def __init__(self, wake_word="okay drivia", language="es-ES"):
@@ -60,21 +61,21 @@ class VoiceAssistant:
 
     def perform_action(self, command):
         print("Triggering action...")
-        #TODO: Implement predictive model to determine the action to perform
-        if "abre" in command:
-            subprocess.Popen(["notepad.exe"])
-        
-        elif "gasolinera" in command.lower():
+        intent = self.predict_intent(command)
+        if intent == "gas_station":
             navigator = Navigator()
             self.text_to_speech(navigator.nearest_gas_station())
             return "Gas"
-        elif "clip" in command.lower() or "graba" in command.lower() or "video" in command.lower():
+        elif intent == "clip":
             self.text_to_speech("Grabando video")
             return "Clip"
-        elif "distancia" in command.lower():
-            location = command.split(" a ")[1]
-            navigator = Navigator()
-            self.text_to_speech(navigator.get_distance_to(location))
+        elif intent == "distance":
+            try:
+                location = command.split(" a ")[1]
+                navigator = Navigator()
+                self.text_to_speech(navigator.get_distance_to(location))
+            except IndexError:
+                self.text_to_speech("No se ha proporcionado un destino válido")
         else:
             print("Command not recognized")
             return None
@@ -95,6 +96,15 @@ class VoiceAssistant:
             pygame.time.Clock().tick(10)
 
         pygame.mixer.quit()
+
+    def predict_intent(self, text):
+        with open('models/assistant_model.pkl', 'rb') as mf:
+            classifier, vectorizer = pickle.load(mf)
+        # Tokenize and vectorize the input text
+        text_vectorized = vectorizer.transform([text])
+        # Predict the intent
+        predicted_intent = classifier.predict(text_vectorized)
+        return predicted_intent[0]
 
     def run(self):
         while True:
