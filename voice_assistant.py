@@ -42,8 +42,6 @@ class VoiceAssistant:
 
     def process_command(self):
         with sr.Microphone() as source:
-            
-
             try:
                 print("Listening for the command...")
                 self.recognizer.adjust_for_ambient_noise(source)

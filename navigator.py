@@ -71,8 +71,9 @@ class Navigator:
                     location = station['geometry']['location']
                     lat = location['lat']
                     lng = location['lng']
+                    street_name = station['vicinity']
                     rating = station['rating']
-                    stations.append({'name': name, 'lat': lat, 'lon': lng, 'rating': rating})
+                    stations.append({'name': name, 'lat': lat, 'lon': lng, 'street_name': street_name, 'rating': rating})
         else:
             print("Error: No results found.")
         
@@ -135,19 +136,22 @@ class Navigator:
             if stations:
                 min_distance = float('inf')
                 for station in stations:
+                    print(station)
                     station_latitude = station['lat']
                     station_longitude = station['lon']
+                    station_name = station['name']
+                    station_street_name = station['street_name']
                     distance = self.calculate_road_distance_from_latlon(user_latitude, user_longitude, station_latitude, station_longitude)
                     if distance < min_distance:
                         min_distance = distance
 
                 time_in_traffic = self.get_time_in_traffic_from_latlon(user_latitude, user_longitude, station_latitude, station_longitude)
                 if time_in_traffic is not None:
-                    return min_distance, time_in_traffic
+                    return station_name, station_street_name, min_distance, time_in_traffic
                 else:
-                    return min_distance, None
+                    return station_name, station_street_name, min_distance, None
             else:
-                return None, None
+                return None, None, None, None
     
     def get_time_in_traffic_from_latlon(self, origin_latitude, origin_longitude, destination_latitude, destination_longitude):
             url = 'https://maps.googleapis.com/maps/api/distancematrix/json'
@@ -191,11 +195,11 @@ class Navigator:
     def nearest_gas_station(self):
         location = self.get_location()
         if location:
-            distance, nearest_station = self.calculate_nearest_gas_station_distance(location[0], location[1])
-            if distance and nearest_station:
-                return "La gasolinera abierta más cercana está a {:.2f} km. Tiempo estimado en tráfico: {} minutes.".format(distance, nearest_station)
-            elif distance and nearest_station is None:
-                return "La gasolinera abierta más cercana está a {:.2f} km.".format(distance)
+            station_name, station_street_name, distance, time_in_traffic = self.calculate_nearest_gas_station_distance(location[0], location[1])
+            if distance and time_in_traffic is not None:
+                return "La gasolinera abierta más cercana es una {}, está en {} a {:.2f} km de tu ubicación. Tiempo estimado en tráfico: {} minutes.".format(station_name, station_street_name, distance, time_in_traffic)
+            elif distance and time_in_traffic is None:
+                return "La gasolinera abierta más cercana es una {}, está en {} a {:.2f} km de tu ubicación.".format(station_name, station_street_name, distance)
             else:
                 return "No se encontraron gasolineras abiertas cercanas"
         else:
@@ -208,9 +212,7 @@ class Navigator:
             road_distance = self.calculate_road_distance_from_address(location[0], location[1], destination_address)
 
             if road_distance is not None:
-                print(f"Distance to artesanos {road_distance} km.")
-                time_in_traffic = self.get_time_in_traffic_from_address(location[0], location[1], "Avenida de los artesanos 6, Tres Cantos, Madrid, Spain")
-                print(f"Time in traffic to artesanos: {time_in_traffic} minutes.")
+                time_in_traffic = self.get_time_in_traffic_from_address(location[0], location[1], destination_address)
                 if time_in_traffic is not None:
                     return "La distancia a {} es de {:.2f} km. Tiempo estimado en tráfico: {} minutos.".format(destination_address, road_distance, time_in_traffic)
                 else:

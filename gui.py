@@ -33,6 +33,7 @@ def run_voice_assistant():
     while play:
         if assistant.listen_for_keyword():
             show_mic_image = True
+            assistant.text_to_speech("¿En qué puedo ayudarte?")
             assistant_action = assistant.process_command()
             show_mic_image = False
 
@@ -52,31 +53,42 @@ def clip_action():
     global assistant_action
     assistant_action = "Clip"
 
-def pause_action():
-    video_handler.pause_toggle()
 
 # GUI setup
 root = tk.Tk()
-root.title("Video Player")
-root.geometry("1280x540")
+root.title("Drivia - Asistente de conducción")
+root.geometry("1280x720")
+
+logo = Image.open('assets/logo.png')
+logo = logo.resize((100, 100), Image.LANCZOS)
+
+logo_photo = ImageTk.PhotoImage(logo)
+
+root.wm_iconphoto(False, logo_photo)
 
 # Left panel for buttons
 left_panel = tk.Frame(root)
 left_panel.pack(side="left", fill="both", expand=True)
 
+logo_label = tk.Label(left_panel, image=logo_photo)
+logo_label.pack(side="top", padx=10, pady=10)
+
 clip_button = ttk.Button(left_panel, text="Clip", command=clip_action)
 clip_button.pack(side="top", padx=10, pady=10)
 
-pause_button = ttk.Button(left_panel, text="Pause", command=pause_action)
-pause_button.pack(side="top", padx=10, pady=10)
-
 # Add mic_image_label and hide initially
-mic_image = Image.open('assets/mic.jpg')
+mic_image = Image.open('assets/mic.png')
 mic_image = mic_image.resize((55, 100), Image.LANCZOS)
 mic_image = ImageTk.PhotoImage(mic_image)
 mic_image_label = tk.Label(left_panel, image=mic_image)
 mic_image_label.pack(side="top", padx=10, pady=10)
+mic_label = tk.Label(left_panel, text="Haz tu consulta", wraplength=100)
+mic_label.pack(side="top", padx=5, pady=5)
 
+warning_label = tk.Label(left_panel, text="", fg="orange", wraplength=100)
+warning_label.pack(side="top", padx=10, pady=10)
+danger_label = tk.Label(left_panel, text="", fg="red", wraplength=100)
+danger_label.pack(side="top", padx=10, pady=10)
 # Right panel for video display
 right_panel = tk.Frame(root)
 right_panel.pack(side="right", fill="both", expand=True)
@@ -123,13 +135,24 @@ def update_frame():
                     if lane_detector.is_object_inside_lane((obj.xyxy[0][0], obj.xyxy[0][1], obj.xyxy[0][2], obj.xyxy[0][3])):
                         # If the person is inside the lane boundaries, warn the driver
                         ObjectDetector.draw_bbox(frame_, obj, (0, 0, 255))
-
-            KeyHandler.draw_key_controls(frame_)
+                        # Draw red lines around the video
+                        if distance_to_person > 5:
+                            danger_label.config(text="")
+                            warning_label.config(text="Peatón detectado en la carretera, ten precaución.")
+                        else:
+                            warning_label.config(text="")
+                            danger_label.config(text="Estás muy cerca del peatón, extrema las precauciones.")
+                    else:
+                        warning_label.config(text="")
+                        danger_label.config(text="")
+            #KeyHandler.draw_key_controls(frame_)
             
             if show_mic_image is True:
                 mic_image_label.pack(side="top", padx=10, pady=10)  # Show mic image when listening
+                mic_label.pack(side="top", padx=5, pady=5)
             else:
                 mic_image_label.pack_forget()  # Hide mic image when not listening
+                mic_label.pack_forget()
                 
             # Convert the frame to RGB format
             frame_rgb = cv2.cvtColor(frame_, cv2.COLOR_BGR2RGB)
@@ -168,6 +191,16 @@ def update_frame():
                 assistant_action = None
             
     root.after(1, update_frame)  # Update frame every 10 milliseconds
+
+update_frame()
+
+root.mainloop()
+
+# Release resources
+video_handler.release()
+cv2.destroyAllWindows()
+if out is not None:
+    out.release()
 
 update_frame()
 
