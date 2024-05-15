@@ -16,7 +16,7 @@ import cv2
 # Load model
 model_handler = ModelHandler('models/yolov8n.pt')
 
-video_path = 'datasets/videos/street5.mp4'
+video_path = 'datasets/videos/video1.mp4'
 video_handler = VideoHandler(video_path)
 lane_detector = LaneDetector()
 play = True
@@ -85,10 +85,13 @@ mic_image_label.pack(side="top", padx=10, pady=10)
 mic_label = tk.Label(left_panel, text="Haz tu consulta", wraplength=100)
 mic_label.pack(side="top", padx=5, pady=5)
 
-warning_label = tk.Label(left_panel, text="", fg="orange", wraplength=100)
-warning_label.pack(side="top", padx=10, pady=10)
-danger_label = tk.Label(left_panel, text="", fg="red", wraplength=100)
-danger_label.pack(side="top", padx=10, pady=10)
+# Add bottom panel for warning and danger labels
+bottom_panel = tk.Frame(root)
+bottom_panel.pack(side="bottom", fill="x")
+
+warning_label = tk.Label(bottom_panel, text="", fg="orange", font=("Arial", 24, "bold"))
+warning_label.pack(side="top", padx=10)
+
 # Right panel for video display
 right_panel = tk.Frame(root)
 right_panel.pack(side="right", fill="both", expand=True)
@@ -137,14 +140,11 @@ def update_frame():
                         ObjectDetector.draw_bbox(frame_, obj, (0, 0, 255))
                         # Draw red lines around the video
                         if distance_to_person > 5:
-                            danger_label.config(text="")
-                            warning_label.config(text="Peatón detectado en la carretera, ten precaución.")
+                            warning_label.config(text="Peatón detectado en la carretera, ten precaución.", fg="orange")
                         else:
-                            warning_label.config(text="")
-                            danger_label.config(text="Estás muy cerca del peatón, extrema las precauciones.")
+                            warning_label.config(text="Estás muy cerca del peatón, extrema las precauciones.", fg="red")
                     else:
                         warning_label.config(text="")
-                        danger_label.config(text="")
             #KeyHandler.draw_key_controls(frame_)
             
             if show_mic_image is True:
