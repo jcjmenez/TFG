@@ -79,7 +79,8 @@ class Navigator:
         
         return stations
 
-    def get_weather(self, lat, lon):
+    def get_weather(self):
+        lat, lon = self.get_location()
         url = "https://api.openweathermap.org/data/2.5/weather"
         params = {
             "lat": lat,
@@ -91,10 +92,11 @@ class Navigator:
         if response.status_code == 200:
             weather_data = response.json()
             current_weather = weather_data['weather'][0]['main']
-            return current_weather
+            return "El tiempo actual es {}".format(current_weather)
+
         else:
             print("Failed to retrieve weather data:", response.status_code)
-            return None
+            return "No se pudo obtener la información del tiempo"
         
     def calculate_road_distance_from_latlon(self, origin_latitude, origin_longitude, destination_latitude, destination_longitude):
         url = 'https://maps.googleapis.com/maps/api/distancematrix/json'

@@ -67,6 +67,9 @@ class VoiceAssistant:
         elif intent == "clip":
             self.text_to_speech("Grabando video")
             return "Clip"
+        elif intent == "weather":
+            navigator = Navigator()
+            self.text_to_speech(navigator.get_weather())
         elif intent == "distance":
             try:
                 location = command.split(" a ")[1]
