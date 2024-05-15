@@ -73,7 +73,9 @@ left_panel.pack(side="left", fill="both", expand=True)
 logo_label = tk.Label(left_panel, image=logo_photo)
 logo_label.pack(side="top", padx=10, pady=10)
 
-clip_button = ttk.Button(left_panel, text="Clip", command=clip_action)
+clip_icon = ImageTk.PhotoImage(Image.open('assets/clip.png').resize((50, 50), Image.LANCZOS))
+clip_icon_sub = clip_icon._PhotoImage__photo.subsample(3, 3)
+clip_button = ttk.Button(left_panel, text="Clip", image=clip_icon_sub, command=clip_action, compound="left")
 clip_button.pack(side="top", padx=10, pady=10)
 
 # Add mic_image_label and hide initially
