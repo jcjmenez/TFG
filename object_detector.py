@@ -8,10 +8,10 @@ class ObjectDetector:
 
     def draw_distance_text(frame, distance, x, y):
         if distance <= 5:
-            cv2.putText(frame, f'Distance: {distance:.2f} meters', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+            cv2.putText(frame, f'Distancia: {distance:.2f} metros', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         (0, 0, 255), 2)
         else:
-            cv2.putText(frame, f'Distance: {distance:.2f} meters', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+            cv2.putText(frame, f'Distancia: {distance:.2f} metros', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         (0, 255, 0), 2)
 
     def draw_bbox(frame, obj, color=(0, 255, 0)):
